@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "paths": {
+    "/bucketS3": {
+      "name": "/bucketS3",
+      "lambdaFunction": "tp2react1905df07",
+      "permissions": {
+        "setting": "private",
+        "auth": [
+          "create",
+          "read",
+          "update",
+          "delete"
+        ]
+      }
+    }
+  }
+}

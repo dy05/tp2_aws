@@ -1,0 +1,23 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-tp2react-dev-231752-authRole",
+      "UnauthRoleArn": "arn:aws:iam::897458684608:role/amplify-tp2react-dev-231752-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::897458684608:role/amplify-tp2react-dev-231752-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-tp2react-dev-231752-deployment",
+      "UnauthRoleName": "amplify-tp2react-dev-231752-unauthRole",
+      "StackName": "amplify-tp2react-dev-231752",
+      "StackId": "arn:aws:cloudformation:us-east-1:897458684608:stack/amplify-tp2react-dev-231752/de7e40b0-3a1e-11ee-8ee2-0a01e48885af",
+      "AmplifyAppId": "d26sdc4xv9u3zc"
+    },
+    "categories": {
+      "auth": {
+        "tp2react941e733a": {}
+      },
+      "function": {
+        "tp2react1905df07": {}
+      }
+    }
+  }
+}
