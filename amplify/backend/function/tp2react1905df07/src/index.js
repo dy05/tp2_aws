@@ -5,13 +5,16 @@
  */
 exports.handler = async (event) => {
     console.log(`EVENT: ${JSON.stringify(event)}`);
-    return {
+    let result =  {
         statusCode: 200,
-    //  Uncomment below to enable CORS requests
-    //  headers: {
-    //      "Access-Control-Allow-Origin": "*",
-    //      "Access-Control-Allow-Headers": "*"
-    //  },
-        body: JSON.stringify('Hello from Lambda!'),
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "*"
+        },
+        body: JSON.stringify({
+            name: 'Good',
+        }),
     };
+
+    return result;
 };
