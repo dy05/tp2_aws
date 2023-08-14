@@ -1,6 +1,6 @@
 {
   "api": {
-    "apiBucket": {
+    "apiAws": {
       "dependsOn": [
         {
           "attributes": [
@@ -8,7 +8,7 @@
             "Arn"
           ],
           "category": "function",
-          "resourceName": "tp2react1905df07"
+          "resourceName": "tp2react8d36bfea"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -16,7 +16,7 @@
     }
   },
   "auth": {
-    "tp2react941e733a": {
+    "tp2react55bc2721": {
       "customAuth": false,
       "dependsOn": [],
       "frontendAuthConfig": {
@@ -45,7 +45,7 @@
     }
   },
   "function": {
-    "tp2react1905df07": {
+    "tp2react8d36bfea": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"

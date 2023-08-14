@@ -1,9 +1,9 @@
 {
   "version": 1,
   "paths": {
-    "/bucketS3": {
-      "name": "/bucketS3",
-      "lambdaFunction": "tp2react1905df07",
+    "/resources": {
+      "name": "/resources",
+      "lambdaFunction": "tp2react8d36bfea",
       "permissions": {
         "setting": "private",
         "auth": [

@@ -16,8 +16,8 @@
         "s3Key": {
             "Type": "String"
         }
-
-
+        
+    
     },
     "Conditions": {
         "ShouldNotCreateEnvResources": {
@@ -49,13 +49,13 @@
             "FunctionName": {
                 "Fn::If": [
                     "ShouldNotCreateEnvResources",
-                    "tp2react1905df07",
+                    "tp2react8d36bfea",
                     {
 
                         "Fn::Join": [
                             "",
                             [
-                                "tp2react1905df07",
+                                "tp2react8d36bfea",
                                 "-",
                                 {
                                     "Ref": "env"
@@ -80,13 +80,13 @@
                 "RoleName": {
                     "Fn::If": [
                         "ShouldNotCreateEnvResources",
-                        "tp2reactLambdaRolea9e51777",
+                        "tp2reactLambdaRole97cc3849",
                         {
 
                             "Fn::Join": [
                                 "",
                                 [
-                                    "tp2reactLambdaRolea9e51777",
+                                    "tp2reactLambdaRole97cc3849",
                                     "-",
                                     {
                                         "Ref": "env"
@@ -129,20 +129,13 @@
                             "logs:CreateLogStream",
                             "logs:PutLogEvents"],
                             "Resource": { "Fn::Sub": [ "arn:aws:logs:${region}:${account}:log-group:/aws/lambda/${lambda}:log-stream:*", { "region": {"Ref": "AWS::Region"}, "account": {"Ref": "AWS::AccountId"}, "lambda": {"Ref": "LambdaFunction"}} ]}
-                        },
-                        {
-                            "Effect": "Allow",
-                            "Action": [
-                                "s3:*"
-                            ],
-                            "Resource": "*"
                         }
                     ]
                 }
             }
         }
-
-
+        
+        
     },
     "Outputs": {
         "Name": {
@@ -163,6 +156,6 @@
                 "Ref": "LambdaExecutionRole"
             }
         }
-
+        
     }
 }
