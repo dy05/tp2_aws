@@ -56,36 +56,27 @@
       "service": "Lambda"
     }
   },
+  "hosting": {
+    "amplifyhosting": {
+      "lastPushTimeStamp": "2023-08-14T01:42:04.837Z",
+      "service": "amplifyhosting",
+      "type": "cicd"
+    }
+  },
   "parameters": {
-    "AMPLIFY_function_S3Trigger94551f50_deploymentBucketName": {
+    "AMPLIFY_hosting_amplifyhosting_appId": {
       "usedBy": [
         {
-          "category": "function",
-          "resourceName": "S3Trigger94551f50"
+          "category": "hosting",
+          "resourceName": "amplifyhosting"
         }
       ]
     },
-    "AMPLIFY_function_S3Trigger94551f50_s3Key": {
+    "AMPLIFY_hosting_amplifyhosting_type": {
       "usedBy": [
         {
-          "category": "function",
-          "resourceName": "S3Trigger94551f50"
-        }
-      ]
-    },
-    "AMPLIFY_function_tp2react8d36bfea_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "tp2react8d36bfea"
-        }
-      ]
-    },
-    "AMPLIFY_function_tp2react8d36bfea_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "tp2react8d36bfea"
+          "category": "hosting",
+          "resourceName": "amplifyhosting"
         }
       ]
     }
