@@ -2,15 +2,10 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "{\"createdOn\":\"Windows\",\"createdBy\":\"Amplify\",\"createdWith\":\"12.2.3\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
   "Parameters": {
-    "CloudWatchRule": {
-      "Type": "String",
-      "Default": "NONE",
-      "Description": " Schedule Expression"
-    },
-    "deploymentBucketName": {
+    "env": {
       "Type": "String"
     },
-    "env": {
+    "deploymentBucketName": {
       "Type": "String"
     },
     "s3Key": {
@@ -35,24 +30,16 @@
         "aws:asset:property": "Code"
       },
       "Properties": {
-        "Code": {
-          "S3Bucket": {
-            "Ref": "deploymentBucketName"
-          },
-          "S3Key": {
-            "Ref": "s3Key"
-          }
-        },
         "Handler": "index.handler",
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "tp2react8d36bfea",
+            "S3Trigger94551f50",
             {
               "Fn::Join": [
                 "",
                 [
-                  "tp2react8d36bfea",
+                  "S3Trigger94551f50",
                   "-",
                   {
                     "Ref": "env"
@@ -66,9 +53,6 @@
           "Variables": {
             "ENV": {
               "Ref": "env"
-            },
-            "REGION": {
-              "Ref": "AWS::Region"
             }
           }
         },
@@ -79,8 +63,15 @@
           ]
         },
         "Runtime": "nodejs18.x",
-        "Layers": [],
-        "Timeout": 25
+        "Timeout": 25,
+        "Code": {
+          "S3Bucket": {
+            "Ref": "deploymentBucketName"
+          },
+          "S3Key": {
+            "Ref": "s3Key"
+          }
+        }
       }
     },
     "LambdaExecutionRole": {
@@ -89,12 +80,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "tp2reactLambdaRole97cc3849",
+            "S3Trigger94551f50LambdaRole94551f50",
             {
               "Fn::Join": [
                 "",
                 [
-                  "tp2reactLambdaRole97cc3849",
+                  "S3Trigger94551f50LambdaRole94551f50",
                   "-",
                   {
                     "Ref": "env"
@@ -160,13 +151,6 @@
                   }
                 ]
               }
-            },
-            {
-              "Effect": "Allow",
-              "Action": [
-                "s3:*"
-              ],
-              "Resource": "*"
             }
           ]
         }

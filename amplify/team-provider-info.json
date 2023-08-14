@@ -9,14 +9,29 @@
       "UnauthRoleName": "amplify-tp2react-dev-22159-unauthRole",
       "StackName": "amplify-tp2react-dev-22159",
       "StackId": "arn:aws:cloudformation:us-east-1:897458684608:stack/amplify-tp2react-dev-22159/96c4e610-3a38-11ee-962b-12955a6869ef",
-      "AmplifyAppId": "d26ejnc874eoz9"
+      "AmplifyAppId": "d26ejnc874eoz9",
+      "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-tp2react-dev-22159-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
     },
     "categories": {
       "auth": {
         "tp2react55bc2721": {}
       },
       "function": {
-        "tp2react8d36bfea": {}
+        "tp2react8d36bfea": {
+          "deploymentBucketName": "amplify-tp2react-dev-22159-deployment",
+          "s3Key": "amplify-builds/tp2react8d36bfea-7664434358534433495a-build.zip"
+        },
+        "S3Trigger94551f50": {
+          "deploymentBucketName": "amplify-tp2react-dev-22159-deployment",
+          "s3Key": "amplify-builds/S3Trigger94551f50-6b56415a3741724f674a-build.zip"
+        }
+      },
+      "api": {
+        "apiAws": {}
+      },
+      "storage": {
+        "files": {},
+        "tp2awsdynamo": {}
       }
     }
   }

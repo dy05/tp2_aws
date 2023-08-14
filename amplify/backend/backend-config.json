@@ -45,10 +45,70 @@
     }
   },
   "function": {
+    "S3Trigger94551f50": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "tp2react8d36bfea": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_S3Trigger94551f50_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "S3Trigger94551f50"
+        }
+      ]
+    },
+    "AMPLIFY_function_S3Trigger94551f50_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "S3Trigger94551f50"
+        }
+      ]
+    },
+    "AMPLIFY_function_tp2react8d36bfea_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tp2react8d36bfea"
+        }
+      ]
+    },
+    "AMPLIFY_function_tp2react8d36bfea_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tp2react8d36bfea"
+        }
+      ]
+    }
+  },
+  "storage": {
+    "files": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn",
+            "LambdaExecutionRole"
+          ],
+          "category": "function",
+          "resourceName": "S3Trigger94551f50"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "S3"
+    },
+    "tp2awsdynamo": {
+      "providerPlugin": "awscloudformation",
+      "service": "DynamoDB"
     }
   }
 }

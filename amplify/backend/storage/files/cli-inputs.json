@@ -1,0 +1,14 @@
+{
+  "resourceName": "files",
+  "policyUUID": "c3d64ed0",
+  "bucketName": "tp2awsfilebucket",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "S3Trigger94551f50",
+  "groupAccess": {}
+}
