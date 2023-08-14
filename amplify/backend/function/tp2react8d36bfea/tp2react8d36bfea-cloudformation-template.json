@@ -16,8 +16,8 @@
         "s3Key": {
             "Type": "String"
         }
-        
-    
+
+
     },
     "Conditions": {
         "ShouldNotCreateEnvResources": {
@@ -129,13 +129,20 @@
                             "logs:CreateLogStream",
                             "logs:PutLogEvents"],
                             "Resource": { "Fn::Sub": [ "arn:aws:logs:${region}:${account}:log-group:/aws/lambda/${lambda}:log-stream:*", { "region": {"Ref": "AWS::Region"}, "account": {"Ref": "AWS::AccountId"}, "lambda": {"Ref": "LambdaFunction"}} ]}
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:*"
+                            ],
+                            "Resource": "*"
                         }
                     ]
                 }
             }
         }
-        
-        
+
+
     },
     "Outputs": {
         "Name": {
@@ -156,6 +163,6 @@
                 "Ref": "LambdaExecutionRole"
             }
         }
-        
+
     }
 }
