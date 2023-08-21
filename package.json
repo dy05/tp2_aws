@@ -19,7 +19,14 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --ci",
+    "lint": "eslint src/**/*.{js,jsx}",
     "eject": "react-scripts eject"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged"
+  },
+  "lint-staged": {
+    "*.{js}": "eslint --cache --fix src/**/*.{js,jsx}"
   },
   "eslintConfig": {
     "extends": [
@@ -38,5 +45,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "eslint": "^8.47.0",
+    "lint-staged": "^14.0.0",
+    "simple-git-hooks": "^2.9.0"
   }
 }

@@ -1,0 +1,10 @@
+{
+  "resourceName": "tp2dynamonotes",
+  "tableName": "tp2dynamonotes",
+  "partitionKey": {
+    "fieldName": "id",
+    "fieldType": "string"
+  },
+  "gsi": [],
+  "triggerFunctions": []
+}

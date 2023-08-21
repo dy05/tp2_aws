@@ -100,6 +100,10 @@
     "tp2awsdynamo": {
       "providerPlugin": "awscloudformation",
       "service": "DynamoDB"
+    },
+    "tp2dynamonotes": {
+      "providerPlugin": "awscloudformation",
+      "service": "DynamoDB"
     }
   }
 }
