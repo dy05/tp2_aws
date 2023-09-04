@@ -40,14 +40,17 @@ const App = ({ signOut, user }) => {
       if (!itemFormLoaded) {
         setItemFormLoaded(true);
         let file = e.target.file.files[0];
-        const response = await Storage.put('files/' + (new Date()).getTime() + '-' + file.name, file, {
+        let newItem = await Storage.put('files/' + (new Date()).getTime() + '-' + file.name, file, {
           contentType: file.type,
           metadata: {
             key: file.name
           }
         });
-        console.log('response storage')
-        console.log(response)
+
+        e.target.file.value = null;
+        e.target.file.files = null;
+        setItemLink(null);
+        setItems([...items, newItem]);
         setTimeout(() => setItemFormLoaded(false), 2000);
       }
     } catch (error) {
@@ -71,9 +74,7 @@ const App = ({ signOut, user }) => {
   const deleteImage = async (id) => {
     try {
       let item = items[id];
-      const response = await Storage.remove(item.key);
-      console.log('response deleting')
-      console.log(response)
+      await Storage.remove(item.key);
       setItems(items.filter((item, index) => index !== id));
     } catch (error) {
       console.error('Error deleting Storage item:', error);
