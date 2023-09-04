@@ -23,11 +23,14 @@ Amplify.configure({
 
 const App = ({ signOut, user }) => {
   const mounted = useRef(false);
+  const [currentRate, setCurrentRate] = useState(0);
   const [resources, setResources] = useState(null);
   const [itemLink, setItemLink] = useState(null);
   const [items, setItems] = useState([]);
   const [itemFormLoaded, setItemFormLoaded] = useState(false);
   const [itemsLoaded, setItemsLoaded] = useState(true);
+  const [formLoaded, setFormLoaded] = useState(false);
+  const [formRateLoaded, setFormRateLoaded] = useState(false);
 
   const sendForm = async (e) => {
     e.preventDefault();
@@ -83,9 +86,45 @@ const App = ({ signOut, user }) => {
 
   const sendNotificationForm = (e) => {
     e.preventDefault();
-    console.log('e.target')
-    console.log(e.target)
+    try {
+      if (!formLoaded && e.target.email?.value && e.target.content?.value) {
+        setFormLoaded(true);
+        let formData = new FormData(e.target);
+        e.target.email.value = null;
+        e.target.content.value = null;
+        setTimeout(() => setFormLoaded(false), 1000);
+      }
+    } catch (error) {
+      console.error('Error Saving notification form:', error);
+    }
   }
+
+  const sendRateForm = (e) => {
+    e.preventDefault();
+    try {
+      if (!formRateLoaded && e.target.place?.value && e.target.comment?.value && e.target.rate?.value) {
+        setFormRateLoaded(true);
+        let formData = new FormData(e.target);
+        e.target.place.value = null;
+        e.target.comment.value = null;
+        setCurrentRate(0);
+        e.target.querySelectorAll('input[name="rate"]')?.forEach((item) => {
+          item.checked = false;
+        })
+        setTimeout(() => setFormRateLoaded(false), 1000);
+      } else {
+        alert('Remplissez tous les champs');
+      }
+    } catch (error) {
+      console.error('Error Saving rate form:', error);
+    }
+  }
+
+  const updateCurrentRate = (e) => {
+    if (e.target.name === 'rate') {
+      setCurrentRate(e.target.value);
+    }
+  };
 
   const fetchApiData = async () => {
     try {
@@ -137,7 +176,7 @@ const App = ({ signOut, user }) => {
       for (let i = 0; i < itemListLength; i++) {
         renderList.push(
           <div key={i} className="flex justify-between shadow-lg mb-2 px-2 py-3 rounded-md border">
-          <span>
+          <span className="overflow-x-auto w-11/12">
             {(items[i].name ?? items[i].key).replace('files/', '')}
           </span>
             <button type="button" onClick={() => deleteImage(i)}>
@@ -247,8 +286,8 @@ const App = ({ signOut, user }) => {
                     (email)
                   </span>
                   </label>
-                  <input className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                         type="email" id="email" name="email" placeholder="dyos98@gmail.com"/>
+                  <input defaultValue="dyosby237@gmail.com" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+                         type="email" id="email" name="email" placeholder="dyos98@gmail.com" required/>
                 </div>
 
                 <div className="mb-4">
@@ -256,16 +295,68 @@ const App = ({ signOut, user }) => {
                     Contenu du mail
                   </label>
                   <textarea className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                            id="content" name="content" placeholder="Bonjour le monde" minLength={4}></textarea>
+                            id="content" name="content" placeholder="Bonjour le monde" minLength={4} defaultValue="Hello" required></textarea>
                 </div>
 
-                <button type="submit" className="md:w-32 bg-gray-700 hover:bg-gray-900 text-white font-bold py-3 px-6 rounded-lg mt-3 transition ease-in-out duration-300">
+                <button disabled={formLoaded} type="submit" className="md:w-32 bg-gray-700 hover:bg-gray-900 text-white font-bold py-3 px-6 rounded-lg mt-3 transition ease-in-out duration-300">
                   Envoyer
+                  {formLoaded ? ' (loaded...)' : ''}
                 </button>
               </form>
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="p-2 md:p-5 md:w-96 border rounded-md shadow-md m-4 mb-5">
+        <h2 className="font-bold text-xl mb-3">
+          Rate a place
+        </h2>
+        <form className="flex flex-col justify-center" onSubmit={sendRateForm} onChange={updateCurrentRate}>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="place">
+              Place
+            </label>
+            <input defaultValue="Toronto" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+                   type="text" id="place" name="place" placeholder="Toronto" required/>
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="comment">
+              Commentaire
+            </label>
+            <textarea className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+                      id="comment" name="comment" placeholder="Bonjour le monde" minLength={4} defaultValue="Nice" required></textarea>
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="rate">
+              Note
+            </label>
+            <div className="mt-3">
+              <label htmlFor="rate-1" className={["inline-block w-8 h-8 rounded-full border bg-gray-200 mr-1 p-2 cursor-pointer", currentRate >= 1 ? 'bg-red-600' : ''].join(' ')}>
+                <input type="radio" className="hidden" name="rate" id="rate-1" value={1}/>
+              </label>
+              <label htmlFor="rate-2" className={["inline-block w-8 h-8 rounded-full border bg-gray-200 mr-1 p-2 cursor-pointer", currentRate >= 2 ? 'bg-red-600' : ''].join(' ')}>
+                <input type="radio" className="hidden" name="rate" id="rate-2" value={2}/>
+              </label>
+              <label htmlFor="rate-3" className={["inline-block w-8 h-8 rounded-full border bg-gray-200 mr-1 p-2 cursor-pointer", currentRate >= 3 ? 'bg-red-600' : ''].join(' ')}>
+                <input type="radio" className="hidden" name="rate" id="rate-3" value={3}/>
+              </label>
+              <label htmlFor="rate-4" className={["inline-block w-8 h-8 rounded-full border bg-gray-200 mr-1 p-2 cursor-pointer", currentRate >= 4 ? 'bg-red-600' : ''].join(' ')}>
+                <input type="radio" className="hidden" name="rate" id="rate-4" value={4}/>
+              </label>
+              <label htmlFor="rate-5" className={["inline-block w-8 h-8 rounded-full border bg-gray-200 mr-1 p-2 cursor-pointer", currentRate >= 5 ? 'bg-red-600' : ''].join(' ')}>
+                <input type="radio" className="hidden" name="rate" id="rate-5" value={5}/>
+              </label>
+            </div>
+          </div>
+
+          <button disabled={formRateLoaded} type="submit" className="md:w-32 bg-gray-700 hover:bg-gray-900 text-white font-bold py-3 px-6 rounded-lg mt-3 transition ease-in-out duration-300">
+            Envoyer
+            {formRateLoaded ? ' (loaded...)' : ''}
+          </button>
+        </form>
       </div>
     </>
   )
