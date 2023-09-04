@@ -1,6 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react'
-import { Amplify, API } from 'aws-amplify'
-// import { Amplify, API, Storage } from 'aws-amplify'
+import { Amplify, API, Storage } from 'aws-amplify'
 import { withAuthenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import awsExports from './aws-exports';
@@ -16,24 +15,48 @@ Amplify.configure({
       },
     ],
   },
+  Storage: {
+    region: "us-east-1",
+    bucket: "tp2awsfilebucket22159-dev"
+  },
 });
 
 const App = ({ signOut, user }) => {
   const mounted = useRef(false);
   const [resources, setResources] = useState(null);
-  const [imageLink, setImageLink] = useState(null);
+  const [itemLink, setItemLink] = useState(null);
+  const [items, setItems] = useState([]);
+  const [itemFormLoaded, setItemFormLoaded] = useState(false);
+  const [itemsLoaded, setItemsLoaded] = useState(true);
 
-  const sendForm = (e) => {
+  const sendForm = async (e) => {
     e.preventDefault();
     if (!e.target.file?.files?.length) {
       alert('Vous devez selectionner un fichier.')
       return;
     }
-    console.log('loll')
+
+    try {
+      if (!itemFormLoaded) {
+        setItemFormLoaded(true);
+        let file = e.target.file.files[0];
+        const response = await Storage.put('files/' + (new Date()).getTime() + '-' + file.name, file, {
+          contentType: file.type,
+          metadata: {
+            key: file.name
+          }
+        });
+        console.log('response storage')
+        console.log(response)
+        setTimeout(() => setItemFormLoaded(false), 2000);
+      }
+    } catch (error) {
+      console.error('Error saving Storage item:', error);
+    }
   }
 
   const toggleResetBtn = () => {
-    setImageLink(null);
+    setItemLink(null);
   }
 
   const uploadFile = (e) => {
@@ -41,15 +64,26 @@ const App = ({ signOut, user }) => {
     let imageElement = document.getElementById('fileInput');
     if (file && file[0] && imageElement) {
       imageElement.src = URL.createObjectURL(file[0]);
-      setImageLink(e.target.value);
+      setItemLink(e.target.value);
     }
-
-    console.log('upload')
   }
 
-  const deleteImage = (id) => {
-    console.log('id')
-    console.log(id)
+  const deleteImage = async (id) => {
+    try {
+      let item = items[id];
+      const response = await Storage.remove(item.key);
+      console.log('response deleting')
+      console.log(response)
+      setItems(items.filter((item, index) => index !== id));
+    } catch (error) {
+      console.error('Error deleting Storage item:', error);
+    }
+  }
+
+  const sendNotificationForm = (e) => {
+    e.preventDefault();
+    console.log('e.target')
+    console.log(e.target)
   }
 
   const fetchApiData = async () => {
@@ -63,13 +97,60 @@ const App = ({ signOut, user }) => {
     }
   };
 
+  const fetchApiItems = async () => {
+    try {
+      const response = await Storage.list('files/', { pageSize: 'ALL' });
+      console.log('Storage list response', response.results);
+      setItems(response.results);
+    } catch (error) {
+      console.error('Error fetching Storage items:', error);
+    }
+  };
+
   useEffect(() => {
     if (!mounted.current) {
       mounted.current = true;
 
-      fetchApiData().then();
+      Promise.all([
+        fetchApiData(),
+        fetchApiItems(),
+      ]).then();
     }
   }, []);
+
+  useEffect(() => {
+    setItemsLoaded(true);
+    setTimeout(() => setItemsLoaded(false), 2000);
+  }, [items]);
+
+  const renderImagesList = () => {
+    let renderList = [
+      (<div key="items" className="p-2 my-2 bg-amber-400 text-white">Liste vide</div>)
+    ];
+
+    const itemListLength = items.length;
+
+    if (itemListLength) {
+      renderList = [];
+
+      for (let i = 0; i < itemListLength; i++) {
+        renderList.push(
+          <div key={i} className="flex justify-between shadow-lg mb-2 px-2 py-3 rounded-md border">
+          <span>
+            {(items[i].name ?? items[i].key).replace('files/', '')}
+          </span>
+            <button type="button" onClick={() => deleteImage(i)}>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4 text-red-500">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+              </svg>
+            </button>
+          </div>
+        );
+      }
+    }
+
+    return <>{renderList}</>;
+  };
 
   return (
     <>
@@ -123,7 +204,7 @@ const App = ({ signOut, user }) => {
               Ajouter un fichier a votre stockage Cloud
             </h2>
             <form onSubmit={sendForm} onReset={toggleResetBtn} encType="multipart/form-data">
-              <div className={imageLink === null ? 'hidden' : 'w-full py-3'}>
+              <div className={itemLink === null ? 'hidden' : 'w-full py-3'}>
                 <img src="#" id="fileInput" alt="Preview" className="h-32" />
               </div>
               <div className="flex py-3 items-center">
@@ -133,7 +214,7 @@ const App = ({ signOut, user }) => {
                     <input type="file" id="file" name="file" placeholder="Choisir un fichier" className="hidden" onChange={uploadFile}/>
                   </label>
 
-                  <button type="reset" className={imageLink === null ? 'hidden' : 'mr-5'}>
+                  <button type="reset" className={itemLink === null ? 'hidden' : 'mr-5'}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                     </svg>
@@ -141,61 +222,47 @@ const App = ({ signOut, user }) => {
                 </div>
 
                 <div>
-                  <button type="submit" className="bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-2 rounded-md transition ease-in-out duration-300">
+                  <button type="submit" disabled={itemFormLoaded} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-2 rounded-md transition ease-in-out duration-300 disabled:bg-red-200">
                     Telecharger
+                    {itemFormLoaded ? ' (Loaded...)' : ''}
                   </button>
                 </div>
               </div>
             </form>
             <div className="flex flex-col">
-              <div className="flex">
-                <span>
-                  fichier 1
-                </span>
-                <button type="button" onClick={() => deleteImage(1)}>
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                  </svg>
-                </button>
-              </div>
-              <div>
-                fichier 2
-              </div>
+              {itemsLoaded ? (<>Loaded...</>) : renderImagesList()}
             </div>
           </div>
-          <div>
-            <h2>
+          <div className="my-3">
+            <h2 className="font-bold text-xl mb-5">
               Envoyer une notification
             </h2>
-            <form action="">
-
-            </form>
-          </div>
-          <div>
-            <form className="flex flex-col justify-center">
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                  Destinataire
-                  <span>
+            <div className="bg-gray-300 p-4 rounded-md">
+              <form className="flex flex-col justify-center" onSubmit={sendNotificationForm}>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+                    Destinataire
+                    <span>
                     (email)
                   </span>
-                </label>
-                <input className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                       type="email" id="email" name="email" placeholder="dyos98@gmail.com"/>
-              </div>
+                  </label>
+                  <input className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+                         type="email" id="email" name="email" placeholder="dyos98@gmail.com"/>
+                </div>
 
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="content">
-                  Contenu du mail
-                </label>
-                <textarea className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                          id="content" name="content" placeholder="Bonjour le monde" minLength={4}></textarea>
-              </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="content">
+                    Contenu du mail
+                  </label>
+                  <textarea className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+                            id="content" name="content" placeholder="Bonjour le monde" minLength={4}></textarea>
+                </div>
 
-              <button type="submit" className="md:w-32 bg-gray-700 hover:bg-gray-900 text-white font-bold py-3 px-6 rounded-lg mt-3 transition ease-in-out duration-300">
-                Envoyer
-              </button>
-            </form>
+                <button type="submit" className="md:w-32 bg-gray-700 hover:bg-gray-900 text-white font-bold py-3 px-6 rounded-lg mt-3 transition ease-in-out duration-300">
+                  Envoyer
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
